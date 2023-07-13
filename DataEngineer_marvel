@@ -1,0 +1,36 @@
+import requests
+import hashlib
+import time
+import json
+import pandas as pd
+
+# Parámetros de autenticación de Marvel
+public_key = 'd267a7c924c86a59f19352c3223721fb'
+private_key = 'b053f57769d354aa4c80c5049a89c5e6b578cda4'
+timestamp = str(int(time.time()))
+hash_value = hashlib.md5((timestamp + private_key + public_key).encode('utf-8')).hexdigest()
+
+# URL de la API de Marvel
+url = 'https://gateway.marvel.com/v1/public/characters'
+params = {
+    'apikey': public_key,
+    'ts': timestamp,
+    'hash': hash_value
+}
+
+# Realizar la solicitud GET a la API
+response = requests.get(url, params=params)
+data = response.json()
+
+# Imprimir el JSON completo para analizar su estructura
+print(json.dumps(data, indent=4))
+
+# Acceder a los resultados del JSON
+# Asegúrate de ajustar la ruta correcta según la estructura del JSON devuelto
+results = data['data']['results']
+
+# Crear el DataFrame
+df = pd.json_normalize(results)
+
+# Guardar el DataFrame en un archivo CSV
+df.to_csv('marvel_data.csv', index=False)
