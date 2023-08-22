@@ -100,7 +100,7 @@ default_args = {
 dag = DAG(
     'marvel_data_pipeline',
     default_args=default_args,
-    schedule_interval= '@daily',  # de forma diaria
+    schedule_interval= timedelta(days=1),  # de forma diaria
     catchup=False,
 )
 
